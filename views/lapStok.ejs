@@ -1,0 +1,68 @@
+<%- include ('layout/header') %>
+<%- include ('layout/navAdmin') %>
+<%- include (role === 'admin' ? 'layout/navAdmin' : 'layout/navKasir') %>
+<div class="content-wrapper" style="background-color: rgb(240, 240, 240);">
+        <div class="container-fluid py-4">
+            <h5>Laporan Stok Barang</h5>
+            <div class="card">
+            <div class="card-header">
+            <div class = "card-body">   
+            <div class="table-responsive">
+                <button id="printButton">Print</button>
+                <table id="stokTable" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Kode Barangact
+                            <th>Nama</th>
+                            <th>Stok</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% let totalStok = 0; %>
+                        <% stok.forEach(function(item) { %>
+                            <tr>
+                                <td><%= item.kode_barang %></td>
+                                <td><%= item.nama %></td>
+                                <td><%= item.stok %></td>
+                            </tr>
+                        <% totalStok += +item.stok; %>
+                        <% }); %>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="2">Total Stok</th>
+                            <th><%= totalStok %> pcs</th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+    $(document).ready(function () {
+      $('#stokTable').DataTable();
+    });
+</script>
+<script>
+    document.getElementById('printButton').addEventListener('click', function() {
+        // Sembunyikan elemen-elemen lain kecuali tabel
+        var elementsToHide = document.querySelectorAll('body > *:not(.content-wrapper)');
+        for (var i = 0; i < elementsToHide.length; i++) {
+            elementsToHide[i].style.display = 'none';
+        }
+
+        // Cetak tabel
+        window.print();
+
+        // Kembalikan tampilan elemen-elemen yang disembunyikan
+        for (var i = 0; i < elementsToHide.length; i++) {
+            elementsToHide[i].style.display = '';
+        }
+    });
+</script>
+<%- include ('layout/footer') %>

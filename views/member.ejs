@@ -1,0 +1,160 @@
+<%- include ('layout/header') %>
+<%- include ('layout/navKasir') %>
+<div class="content-wrapper" style="background-color: rgb(240, 240, 240);">
+        <div class="container-fluid py-4">
+            <!-- <div class="row">
+            <div class="col-9">
+            <div class="card">
+            <div class="card-header">
+                <div class="col-3">
+                    <h4>Laporan Data Member</h4>
+                    <button id="printButton" style="">Print</button>
+                </div>
+            </div>
+            </div> -->
+            <form action="/member/add" method="POST">
+                <div class="table-responsive">
+                  <table  class="form-table">  
+                      <tr>
+                          <td><label for="kode_member">Kode Member</label></td>
+                          <td><input  class="input-field" type="text" name="kode_member" required></td>
+                          <td>Telepon</td>
+                          <td><input class="input-field" type="text" name="telepon" required></td>
+                      </tr>
+                      <tr>
+                          <td> <label for="nama">Nama</label></td>
+                          <td><input class="input-field" type="text" name="nama" required></td>
+                          <td>Alamat</td>
+                          <td><input class="input-field" type="text" name="alamat" required></td>
+                      </tr>
+                      <tr>
+                          <td colspan="2">
+                              <button  class="form-btn" type="submit" name="aksi" value="simpan" required>Simpan</button>
+                          </td>
+                      </tr>
+                  </table>
+            </form>
+            <div class="card">
+            <div class="card-header">
+            <button id="printButton">Print</button>
+            <div class = "card-body">  
+            <div class="table-responsive">
+                <table id="memberTable" class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Kode Member</th>
+                            <th>Nama</th>
+                            <th>Telepon</th>
+                            <th>Alamat</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% member.forEach(function(item) { %>
+                            <tr>
+                                <td><%= item.kode_member %></td>
+                                <td><%= item.nama %></td>
+                                <td><%= item.telepon %></td>
+                                <td><%= item.alamat %></td>
+                                <td colspan="2">
+                                    <center><div class="btn-group">
+                                        
+                                        <button class="btn-update" onclick="openUpdateModal('<%= item.kode_member%>')">Update</button>
+                                              <div id="updateModal_<%= item.kode_member %>" class="modal">
+                                                   <div class="modal-content">
+                                                      <span class="close" onclick="closeModal('<%= item.kode_member %>')">&times;</span>
+                                                      <form action="/member/update/<%= item.kode_member %>" method="POST">
+                                                          <input class="input-field" type="hidden" name="kode_member" value="<%= item.kode_member %>" required>
+                                                          <label for="nama">Nama</label>
+                                                          <input class="input-field" type="text" name="nama" value="<%= item.nama%>" required>
+                                                          <label for="telepon">Telepon</label>
+                                                          <input class="input-field" type="text" name="telepon" value="<%= item.telepon %>" required>
+                                                          <label for="alamat">Alamat</label>
+                                                          <input class="input-field" type="text" name="alamat" value="<%= item.alamat %>" required>
+                                                          <button class="btn" type="submit">Simpan</button>
+                                                      </form>
+                                                  </div>
+                                              </div>
+                                            <form action="/member/delete/<%= item.kode_member%>" method="POST">
+                                                <button class="btn-delete" onclick="return confirm('Apakah Anda yakin ingin menghapus data member ini?')" type="submit">Delete</button>
+                                            </form>
+                                    </div></center>
+                                  </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+    $(document).ready(function () {
+      $('#memberTable').DataTable();
+    });
+</script>
+
+<script>
+    function openUpdateModal(kode_member) {
+        $("#updateModal_" + kode_member).show();
+    }
+
+    function closeModal(kode_member) {
+        $("#updateModal_" + kode_member).hide();
+    }
+
+    // Close the modal when clicking outside the modal
+    $(".modal").click(function () {
+        $(".modal").hide();
+    });
+
+    // Prevent modal from closing when clicking inside the modal
+    $(".modal-content").click(function (event) {
+        event.stopPropagation();
+    });
+    // Get the modal and button elements
+    var modal = document.getElementById('myModal');
+    var btnOpenModal = document.getElementById('btnOpenModal');
+    var btnCloseModal = document.getElementById('btnCloseModal');
+
+    // Open the modal when the button is clicked
+    btnOpenModal.onclick = function() {
+        modal.style.display = 'block';
+    }
+
+    // Close the modal when the close button is clicked
+    btnCloseModal.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    // Close the modal if the user clicks outside of it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+</script>
+
+
+<script>
+    document.getElementById('printButton').addEventListener('click', function() {
+        // Sembunyikan elemen-elemen lain kecuali tabel
+        var elementsToHide = document.querySelectorAll('body > *:not(.content-wrapper)');
+        for (var i = 0; i < elementsToHide.length; i++) {
+            elementsToHide[i].style.display = 'none';
+        }
+
+        // Cetak tabel
+        window.print();
+
+        // Kembalikan tampilan elemen-elemen yang disembunyikan
+        for (var i = 0; i < elementsToHide.length; i++) {
+            elementsToHide[i].style.display = '';
+        }
+    });
+</script>
+<%- include ('layout/footer') %>

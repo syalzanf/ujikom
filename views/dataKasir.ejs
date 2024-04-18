@@ -1,0 +1,317 @@
+<%- include ('layout/header') %>
+<%- include ('layout/navAdmin') %>
+<head>
+  <style>
+        .form-table {
+        width: 70%;
+        border-collapse: collapse;
+        margin: 20px;
+        /* Tambahkan gaya lain sesuai kebutuhan Anda */
+        }
+        .form-table td {   
+            padding: 4px;
+            text-align: left;
+        }
+        .form-btn {
+        border-radius: 2px  ;
+        background-color: rgb(2, 159, 5);
+        border: none;
+        color: #FFFFFF;
+        text-align: center;
+        font-size: 15px;
+        padding: 5px;
+        width: 100px;   
+        cursor: pointer;
+         margin: 2px;
+        }
+
+        .form-btn:hover {
+        background-color: rgb(3, 201, 0);
+        }
+        .input-field {
+        width: 80%;
+        padding: 1px;
+        outline: none;
+        border: 1 solid rgb(212, 212, 212);
+        }
+
+        .input-field:focus {
+        border: 2px solid rgb(71, 170, 236);
+        }
+        .btn-group:after {
+        content: "";
+        clear: both;
+        display: table;
+        }
+       .btn-group button {
+        border: 1px; 
+        color: rgb(255, 255, 255);
+        padding: 3px 16px; 
+        cursor: pointer; 
+        float: left;
+        margin-right: 7px; 
+        }
+        .btn-delete {
+        background-color: #c50d00; 
+        }
+        .btn-delete:hover {
+        background-color: #f30000;
+        }
+
+        .btn-update {
+        background-color: #007710; 
+        }
+        .btn-update:hover {
+        background-color: #009414 ;
+        }
+        .btn-reset {
+        background-color: #00146d; 
+        }
+        .btn-reset:hover {
+        background-color: #0047a3 ;
+        }
+ /* Modal styles */
+ .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(148, 148, 148, 0.4);
+            padding-top: 100px;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 20%;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .close {
+            color: rgb(194, 0, 0);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #ff0000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        label[for="jumlahMasuk"] {
+        display: block; 
+        margin-bottom: 5px; 
+        font-size: 20px; 
+        color: #333; 
+    }
+        .btn {
+        /* Your existing styles */
+        border-radius: 2px;
+        background-color: rgb(0, 158, 34);
+        border: none;
+        color: #FFFFFF;
+        text-align: center;
+        font-size: 15px;
+        padding: 4px;
+        width: 150px;
+        cursor: pointer;
+        margin: 10px;
+    }
+
+    .btn:hover {
+        background-color: rgb(0, 201, 43);
+        color: #FFFFFF;
+    }
+  </style>
+</head>
+<div class="content-wrapper" style="background-color: rgb(240, 240, 240);">
+  <div class="container-fluid py-4">
+      <h1>Data Kasir</h1>
+
+      <form action="/dataKasir/add" method="POST">
+        <div class="table-responsive">
+          <table  class="form-table">  
+              <tr>
+                  <td><label for="Username">Username</label></td>
+                  <td><input  class="input-field" type="text" name="username" required></td>
+                  <td>Telepon</td>
+                  <td><input class="input-field" type="number" name="telepon" required></td>
+                  <td>Password</td>
+                  <td><input  class="input-field" type="text" name="password" required></td>
+              </tr>
+              <tr>
+                  <td> <label for="nama_lengkap">Nama Lengkap</label></td>
+                  <td><input class="input-field" type="text" name="nama_lengkap" required></td>
+                  <td>Alamat</td>
+                  <td><input class="input-field" type="text" name="alamat" required></td>
+              </tr>
+              <tr>
+                  <td colspan="2">
+                      <button  class="form-btn" type="submit" name="aksi" value="simpan" required>Simpan</button>
+                  </td>
+              </tr>
+          </table>
+      </form>
+
+    <div class="card">
+    <div class="card-header">
+    <div class = "card-body">      
+      <div class="table-responsive">
+        <table id="kasirTable" class="table">
+          <thead>
+              <tr>
+                  <th>Username</th>
+                  <th>Nama Lengkap</th>
+                  <th>Telepon</th>
+                  <th>Alamat</th>
+                  <th>Aksi</th>
+              </tr>
+          </thead>
+          <tbody>
+              <% kasir.forEach(function(item) { %>
+                  <tr>
+                      <td><%= item.username %></td>
+                      <td><%= item.nama_lengkap %></td>
+                      <td><%= item.telepon %></td>
+                      <td><%= item.alamat %></td>
+                      <td colspan="2">
+                        <center><div class="btn-group">
+                            <form action="/dataKasir/delete/<%= item.username %>" method="POST">
+                                <button class="btn-delete" onclick="return confirm('Apakah Anda yakin ingin menghapus data kasir ini?')" type="submit">Delete</button>
+                            </form>
+                            <button class="btn-update" onclick="openUpdateModal('<%= item.username %>')">Update</button>
+                                  <div id="updateModal_<%= item.username %>" class="modal">
+                                       <div class="modal-content">
+                                          <span class="close" onclick="closeModal('<%= item.username %>')">&times;</span>
+                                          <form action="/dataKasir/update/<%= item.username %>" method="POST">
+                                              <input class="input-field" type="hidden" name="username" value="<%= item.username %>" required>
+                                              <label for="nama">Nama Lengkap</label>
+                                              <input class="input-field" type="text" name="nama_lengkap" value="<%= item.nama_lengkap%>" required>
+                                              <label for="telepon">Telepon</label>
+                                              <input class="input-field" type="text" name="telepon" value="<%= item.telepon %>" required>
+                                              <label for="alamat">Alamat</label>
+                                              <input class="input-field" type="text" name="alamat" value="<%= item.alamat %>" required>
+                                              <button class="btn" type="submit">Simpan</button>
+                                          </form>
+                                      </div>
+                                  </div>
+                            <button class="btn-reset" onclick="openResetModal('<%= item.username %>')">Reset Password</button>
+                                  <div id="resetModal_<%= item.username %>" class="modal">
+                                       <div class="modal-content">
+                                          <span class="close" onclick="closeModal('<%= item.username %>')">&times;</span>
+                                          <form action="/dataKasir/reset-password/<%= item.username %>" method="POST">
+                                              <label for="password">New Password</label>
+                                              <input class="input-field" type="text" name="newPassword" required>
+                                              <button class="btn" type="submit">Reset</button>
+                                          </form>
+                                      </div>
+                                  </div>
+                        </div></center>
+                      </td>
+                  </tr>
+              <% }); %>
+          </tbody>
+      </table>
+      </div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $('#kasirTable').DataTable();
+  });
+</script>
+<script>
+    function openResetModal(username) {
+        $("#resetModal_" + username).show();
+    }
+
+    function closeModal(username) {
+        $("#resetModal_" + username).hide();
+    }
+
+    // Close the modal when clicking outside the modal
+    $(".modal").click(function () {
+        $(".modal").hide();
+    });
+
+    // Prevent modal from closing when clicking inside the modal
+    $(".modal-content").click(function (event) {
+        event.stopPropagation();
+    });
+    // Get the modal and button elements
+    var modal = document.getElementById('myModal');
+    var btnOpenModal = document.getElementById('btnOpenModal');
+    var btnCloseModal = document.getElementById('btnCloseModal');
+
+    // Open the modal when the button is clicked
+    btnOpenModal.onclick = function() {
+        modal.style.display = 'block';
+    }
+
+    // Close the modal when the close button is clicked
+    btnCloseModal.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    // Close the modal if the user clicks outside of it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+</script>
+<script>
+    function openUpdateModal(username) {
+        $("#updateModal_" + username).show();
+    }
+
+    function closeModal(username) {
+        $("#updateModal_" + username).hide();
+    }
+
+    // Close the modal when clicking outside the modal
+    $(".modal").click(function () {
+        $(".modal").hide();
+    });
+
+    // Prevent modal from closing when clicking inside the modal
+    $(".modal-content").click(function (event) {
+        event.stopPropagation();
+    });
+    // Get the modal and button elements
+    var modal = document.getElementById('myModal');
+    var btnOpenModal = document.getElementById('btnOpenModal');
+    var btnCloseModal = document.getElementById('btnCloseModal');
+
+    // Open the modal when the button is clicked
+    btnOpenModal.onclick = function() {
+        modal.style.display = 'block';
+    }
+
+    // Close the modal when the close button is clicked
+    btnCloseModal.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    // Close the modal if the user clicks outside of it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+</script>
+
+<%- include ('layout/footer') %>

@@ -1,0 +1,300 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+   
+   <link rel="stylesheet" type="text/css" href="/assets/css/jquery.dataTables.min.css">
+   <link rel="stylesheet" href="/assets/css/dataTables.bootstrap4.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css"/>
+
+ 
+   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   <script src="/assets/js/jquery.dataTables.js"></script>
+
+  
+   <script type="text/javascript" charset="utf8" src="/assets/js/jquery.dataTables.min.js"></script>
+   <script src="/assets/js/dataTables.bootstrap4.js"></script>
+</head>
+<body> -->
+    
+<%- include ('layout/header') %>
+<%- include (isAdmin ? 'layout/navAdmin' : 'layout/navKasir') %>
+<head>
+<style>
+        .form-table {
+            width: 70%;
+            border-collapse: collapse;
+            margin: 20px;
+            /* Tambahkan gaya lain sesuai kebutuhan Anda */
+        }
+        .form-table td {   
+            padding: 4px;
+            text-align: left;
+        }
+        .form-btn {
+            border-radius: 2px  ;
+            background-color: rgb(2, 159, 5);
+            border: none;
+            color: #FFFFFF;
+            text-align: center;
+            font-size: 15px;
+            padding: 5px;
+            width: 100px;   
+            cursor: pointer;
+            margin: 2px;
+        }
+
+        .form-btn:hover {
+            background-color: rgb(3, 201, 0);
+        }
+        .input-field {
+        width: 80%;
+        padding: 1px;
+        outline: none;
+        border: 1 solid rgb(212, 212, 212);
+        }
+
+        .input-field:focus {
+        border: 2px solid rgb(71, 170, 236);
+        }
+         /* Modal styles */
+         .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(148, 148, 148, 0.4);
+            padding-top: 100px;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            margin: 5% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 20%;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .close {
+            color: rgb(194, 0, 0);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #ff0000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        label[for="jumlahMasuk"] {
+        display: block; 
+        margin-bottom: 5px; 
+        font-size: 20px; 
+        color: #333; 
+    }
+        .btn {
+        /* Your existing styles */
+        border-radius: 2px;
+        background-color: rgb(0, 158, 34);
+        border: none;
+        color: #FFFFFF;
+        text-align: center;
+        font-size: 15px;
+        padding: 4px;
+        width: 150px;
+        cursor: pointer;
+        margin: 10px;
+    }
+
+    .btn:hover {
+        background-color: rgb(0, 201, 43);
+        color: #FFFFFF;
+    }
+    .btnCancel {
+        /* Your existing styles */
+        border-radius: 2px;
+        background-color: rgb(190, 0, 0);
+        border: none;
+        color: #FFFFFF;
+        text-align: center;
+        font-size: 15px;
+        padding: 4px;
+        width: 150px;
+        cursor: pointer;
+        margin: 10px;
+    }
+    .btnCancel:hover {
+        background-color: rgb(255, 24, 24);
+        color: #FFFFFF;
+    }
+</style>
+</head>
+
+<div class="content-wrapper" style="background-color: rgb(240, 240, 240);">
+  <div class="container-fluid py-4">
+      <div class="row">
+          <div class="col-md-3">  
+          </div>
+          <div class="col-md-10">
+            <h1>Data Barang</h1>
+
+            <% if (isAdmin) { %>
+            <form action="/barang/add" method="POST">
+            <div class="table-responsive">
+              <table  class="form-table">  
+                  <tr>
+                      <td><label for="kodeBarang">Kode Barang</label></td>
+                      <td><input  class="input-field" type="text" name="kode_barang" required></td>
+                      <td>Harga</td>
+                      <td><input  class="input-field" type="text" name="harga" required></td>
+                      
+                  </tr>
+                  <tr>
+                      <td> <label for="judul">Nama Barang</label></td>
+                      <td><input class="input-field" type="text" name="nama" required></td>
+                      <td>Stok</td>
+                      <td><input class="input-field" type="text" name="stok" required></td>
+                  </tr>
+                  <tr>
+                      <td colspan="2">
+                          <button  class="form-btn" type="submit" name="aksi" value="simpan" required>Simpan</button>
+                      </td>
+                  </tr>
+              </table>
+          </form>
+          <% } %>
+
+          <div class="card">
+            <div class="card-header">
+                <div class = "card-body">
+                    <table id="barangTable" class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Kode Barang</th>
+                                <th>Nama</th>
+                                <th>Harga</th>
+                                <th>Stok</th>
+                                <% if (isAdmin) { %>
+                                <th>Aksi</th>
+                                <% } %>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% barang.forEach(function(item) { %>
+                                <tr>
+                                    <td><%= item.kode_barang %></td>
+                                    <td><%= item.nama %></td>
+                                    <td><%= item.harga %></td>
+                                    <td><%= item.stok %></td>
+                                    <% if (isAdmin) { %>
+                                    <td colspan="2">
+                                      <center>
+                                      <div class="btn-group">
+                                       <!-- Button to trigger the modal for adding stock -->
+                                          <button class="btn-tambah-barang" onclick="openModal('<%= item.kode_barang %>')">Edit</button>
+                                            <div id="editModal_<%= item.kode_barang %>" class="modal">
+                                                <div class="modal-content">
+                                                    <span class="close" onclick="closeModal('<%= item.kode_barang %>')">&times;</span>
+                                                    <div class="modal-header">
+                                                        <h2>Edit Barang</h2>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form action="/barang/update/<%= item.kode_barang %>" method="POST">
+                                                            <div class="form-group">
+                                                                <label for="nama">Nama Barang</label>
+                                                                <input class="input-field" type="text" name="nama" value="<%= item.nama %>" required>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="harga">Harga</label>
+                                                                <input class="input-field" type="text" name="harga" value="<%= item.harga %>" required>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label for="harga">Stok</label>
+                                                                <input class="input-field" type="number" name="stok" value="<%= item.stok %>" required>
+                                                            </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button class="btn" type="submit">Simpan</button>
+                                                        </form>
+                                                        <button class="btnCancel" onclick="closeModal('<%= item.kode_barang %>')">Batal</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                          <form action="/dataBuku/delete/<%= item.kode_barang %>" method="POST">
+                                            <button class="btn-delete" onclick="return confirm('Apakah Anda yakin ingin menghapus buku ini?')">Hapus</button>
+                                        </form>
+                                      </div>
+                                  </center>
+                                  </td>
+                                  <% } %>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div> 
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $('#barangTable').DataTable();
+  });
+  
+</script>
+<!-- JavaScript code to handle modal functionality -->
+<script>
+    function openModal(bookId) {
+        $("#editModal_" + bookId).show();
+    }
+
+    function closeModal(bookId) {
+        $("#editModal_" + bookId).hide();
+    }
+
+    // Close the modal when clicking outside the modal
+    $(".modal").click(function () {
+        $(".modal").hide();
+    });
+
+    // Prevent modal from closing when clicking inside the modal
+    $(".modal-content").click(function (event) {
+        event.stopPropagation();
+    });
+    // Get the modal and button elements
+    var modal = document.getElementById('myModal');
+    var btnOpenModal = document.getElementById('btnOpenModal');
+    var btnCloseModal = document.getElementById('btnCloseModal');
+
+    // Open the modal when the button is clicked
+    btnOpenModal.onclick = function() {
+        modal.style.display = 'block';
+    }
+
+    // Close the modal when the close button is clicked
+    btnCloseModal.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    // Close the modal if the user clicks outside of it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+</script>
+
+<%- include ('layout/footer') %>

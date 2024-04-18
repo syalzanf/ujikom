@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Tambahkan link ke file Bootstrap CSS -->
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <style>
+        /* Atur warna latar belakang container */
+        .custom-container {
+            background-color: #f0f0f0; /* Ganti dengan warna yang diinginkan */
+            width: 400px; /* Atur lebar container */
+            padding: 20px; /* Berikan ruang padding di dalam container */
+            margin-top: 50px; /* Atur jarak atas dari container */
+        }
+
+        /* Atur ukuran dan posisi tombol */
+        .custom-button {
+            width: 100%; /* Tombol mengisi lebar container */
+            margin-top: 20px; /* Atur jarak atas tombol */
+        }
+    </style>
+</head>
+<body>
+    <!-- Container dengan ukuran biasa dan warna kustom -->
+    <div class="container custom-container">
+        <h2>Login</h2>
+        <form action="/" method="POST">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required class="form-control">
+            <br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required class="form-control">
+            <br>
+            <label for="role">Role:</label>
+            <select id="role" name="role" required class="form-control">
+                <option value="admin">Admin</option>
+                <option value="kasir">Kasir</option>
+            </select>
+            <br>
+            <!-- Tambahkan kelas custom-button ke tombol -->
+            <button type="submit" class="btn btn-primary custom-button">Login</button>
+            <div class="mb-3">
+                <a href="/forgotPassword-admin" class="button-link">Forgot password?</a>
+        </div>
+        </form>
+    </div>
+
+    <!-- Tambahkan link ke file Bootstrap JavaScript (Opsional, hanya jika Anda menggunakan fitur JavaScript Bootstrap) -->
+    <script src="assets/js/bootstrap.min.js"></script>
+</body>
+</html>
